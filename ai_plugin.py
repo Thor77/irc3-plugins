@@ -84,10 +84,10 @@ class AIPlugin(object):
                     return
         replyrate = self.replyrate
         if self.bot.nick in data:
-            replyrate *= 2
-        replyrate = 100 if replyrate > 100 else replyrate
+            replyrate /= 2
+        replyrate = 1 if replyrate < 1 else replyrate
         self.ai.learn(data)
-        if randint(0, 100) < replyrate and not self.bot.muted:
+        if randint(0, replyrate) == 0 and not self.bot.muted:
             r = self.ai.reply(data)
             if r:
                 self.bot.privmsg(target, r)
