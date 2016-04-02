@@ -8,7 +8,7 @@ pod = ''
 profile_id = ''
 
 profile_url = pod + '/people/' + profile_id + '/stream.json'
-ai = PyAI()
+ai = PyAI(db_prefix='lolbot')
 
 
 # fetch posts from diaspora
