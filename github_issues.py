@@ -3,7 +3,6 @@ import re
 
 import irc3
 import requests
-from irc3.plugins.command import command
 
 
 @irc3.plugin
