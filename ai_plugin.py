@@ -5,8 +5,8 @@ import irc3
 import requests
 from irc3.plugins.command import command
 from irc3.rfc import JOIN_PART_QUIT, PRIVMSG
-
-from pyai import PyAI
+from markov import MarkovPy
+from markov.stores import Pickle
 
 
 @irc3.plugin
@@ -14,19 +14,18 @@ class AIPlugin(object):
 
     def __init__(self, bot):
         self.bot = bot
-        self.ai = PyAI(db_prefix='lolbot')
+        self.ai = MarkovPy(store=Pickle('lolbot.pickle'))
         self.replyrate = 20
         if 'ai' in self.bot.config and \
                 'replyrate' in self.bot.config['ai']:
                     self.replyrate = self.bot.config['ai']['replyrate']
 
     def create_gist(self, word):
-        word_key = self.ai._words_key(word)
-        if not self.ai.db.exists(word_key):
+        if not self.ai.store.known(word):
             return False
-        relations = self.ai.db.hgetall(word_key)
-        relations_formatted = ['- {}'.format(relation.decode(errors='replace'))
-                               for relation in relations]
+        relations = self.ai.store.next_words(word)
+        relations_formatted = ['- {} *{}*'.format(word, score)
+                               for word, score in relations]
         relations_formatted.insert(0, word)
         relations_formatted.insert(1, '====')
         r = requests.post('https://api.github.com/gists', json={
@@ -62,19 +61,16 @@ class AIPlugin(object):
         word = args['<word>']
         if word:
             word = word.lower()
-            word_key = self.ai._words_key(word)
-            if self.ai.db.exists(word_key):
+            if self.ai.store.known(word):
                 gist_url = self.create_gist(word)
                 return '"{}" hat {} Verbindungen! ' \
                     'Du kannst sie dir hier ansehen: {}'.format(
-                        word, self.ai.db.hlen(word_key), gist_url
+                        word, self.ai.store.relation_count(word), gist_url
                     )
             else:
-                return 'Ich kenne dieses Wort nicht :('
+                return 'Ich kenne dieses Wort nicht!'
         else:
-            return 'Ich kenne {} Wörter!'.format(
-                len(self.ai.db.keys(self.ai._words_key('*')))
-            )
+            return 'Ich kenne {} Wörter!'.format(len(self.ai))
 
     @irc3.event(PRIVMSG)
     def ai_process_reply(self, mask=None, event=None, target=None, data=None):
