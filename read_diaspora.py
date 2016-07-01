@@ -2,13 +2,14 @@ import time
 
 import requests
 
-from pyai import PyAI
+from markov import MarkovPy
+from markov.stores import Pickle
 
 pod = ''
 profile_id = ''
 
 profile_url = pod + '/people/' + profile_id + '/stream.json'
-ai = PyAI(db_prefix='lolbot')
+ai = MarkovPy(store=Pickle(path='lolbot.pickle'))
 
 
 # fetch posts from diaspora
@@ -29,6 +30,7 @@ while days_left > 0 and max_time > 0:
     days_left -= 1
 
 print('learning from', len(posts_text), 'posts...')
-for post_text in posts_text:
+for i, post_text in enumerate(posts_text):
+    print('parsing post', i + 1)
     ai.learn(post_text)
 print('done')
