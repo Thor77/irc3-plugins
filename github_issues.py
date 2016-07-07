@@ -12,11 +12,9 @@ class GithubIssuesPlugin(object):
         self.bot = bot
         self.re_issues = re.compile(r'(?:^|\s+|\()#(\d*)\b')
         self.repo_link = None
-        if 'github_issues' in self.bot.config and \
-                'user_org' in self.bot.config['github_issues'] and \
-                'repo' in self.bot.config['github_issues']:
-                    self.repo_link = bot.config['github_issues']['user_org'] +\
-                                    '/' + bot.config['github_issues']['repo']
+        gi_conf = self.bot.config.get('github_issues', {})
+        self.repo_link = gi_conf.get('user_org', '') + \
+            '/' + gi_conf.get('repo', '')
 
     @irc3.event(irc3.rfc.PRIVMSG)
     def issue(self, mask, event, target, data):

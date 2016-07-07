@@ -10,15 +10,7 @@ class MutePlugin(object):
     def __init__(self, bot):
         self.bot = bot
         self.bot.muted = False
-        self.maxmute = 360
-        if 'mute' in self.bot.config and \
-                'maxmute' in self.bot.config['mute']:
-                    try:
-                        self.maxmute = int(self.bot.config['mute']['maxmute'])
-                    except:
-                        # cant set custom maxmute
-                        # continue anyway
-                        pass
+        self.maxmute = int(self.bot.config.get('mute', {}).get('maxmute', 360))
 
     @command
     def mute(self, mask, target, args):

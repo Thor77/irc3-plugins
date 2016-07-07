@@ -15,10 +15,7 @@ class AIPlugin(object):
     def __init__(self, bot):
         self.bot = bot
         self.ai = MarkovPy(store=Pickle('lolbot.pickle'))
-        self.replyrate = 20
-        if 'ai' in self.bot.config and \
-                'replyrate' in self.bot.config['ai']:
-                    self.replyrate = self.bot.config['ai']['replyrate']
+        self.replyrate = self.bot.config.get('ai', {}).get('replyrate', 20)
 
     def create_gist(self, word):
         if not self.ai.store.known(word):
