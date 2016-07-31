@@ -70,7 +70,8 @@ class AIPlugin(object):
                 text = [word, '====']
                 text.extend(
                     '- {} *{}*'.format(word, score)
-                    for word, score in words
+                    for word, score in sorted(words, key=lambda w: w[1],
+                                              reverse=True)
                 )
                 gist_url = self.create_gist('\n'.join(text), title=word)
                 return '"{}" hat {} Verbindungen! ' \
