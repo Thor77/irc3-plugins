@@ -11,7 +11,8 @@ class GithubIssuesPlugin(object):
     def __init__(self, bot):
         self.bot = bot
         self.re_issues = re.compile(
-            r'(?:^|\s+)(?P<user_org>[\d\w]+/)?(?P<repo>[\d\w]+)?#(?P<id>\d+)'
+            r'(?:^|\s+)(?P<user_org>[\d\w\-._]+/)?'
+            r'(?P<repo>[\d\w\-._]+)?#(?P<id>\d+)'
         )
         gh_conf = self.bot.config.get('github_issues', {})
         self.default_user_org = gh_conf.get('user_org', '')
