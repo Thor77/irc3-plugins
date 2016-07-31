@@ -50,7 +50,7 @@ class AIPlugin(object):
             %%reply <data>...
         '''
         data = ' '.join(args['<data>'])
-        r = self.ai.process(data)
+        r = self.ai.reply(data, min_length=2)
         if r:
             return r
 
