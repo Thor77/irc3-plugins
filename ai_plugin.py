@@ -65,6 +65,8 @@ class AIPlugin(object):
             word = word.lower()
             if self.ai.store.known(word):
                 words = self.ai.store.next_words(word)
+                if '\n' in words:
+                    words.remove('\n')
                 text = [word, '====']
                 text.extend(
                     '- {} *{}*'.format(word, score)
