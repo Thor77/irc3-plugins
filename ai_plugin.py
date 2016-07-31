@@ -17,20 +17,25 @@ class AIPlugin(object):
         self.ai = MarkovPy(store=Pickle('lolbot.pickle'))
         self.replyrate = self.bot.config.get('ai', {}).get('replyrate', 20)
 
-    def create_gist(self, word):
-        if not self.ai.store.known(word):
-            return False
-        relations = self.ai.store.next_words(word)
-        relations_formatted = ['- {} *{}*'.format(word, score)
-                               for word, score in relations]
-        relations_formatted.insert(0, word)
-        relations_formatted.insert(1, '====')
+    def create_gist(self, text, title):
+        '''
+        Create a gist from `text` and `title`
+
+        :param text: content of the gist
+        :param title: title of the gist
+
+        :type text: str
+        :type title: str
+
+        :return: url of the created gist
+        :rtype: str
+        '''
         r = requests.post('https://api.github.com/gists', json={
-            'description': 'Relations to {}'.format(word),
+            'description': 'Relations to {}'.format(title),
             'public': False,
             'files': {
                 'relations.md': {
-                    'content': '\n'.join(relations_formatted)
+                    'content': text
                 }
             }
         })
@@ -59,7 +64,13 @@ class AIPlugin(object):
         if word:
             word = word.lower()
             if self.ai.store.known(word):
-                gist_url = self.create_gist(word)
+                words = self.ai.store.next_words(word)
+                text = [word, '====']
+                text.extend(
+                    '- {} *{}*'.format(word, score)
+                    for word, score in words
+                )
+                gist_url = self.create_gist('\n'.join(text), title=word)
                 return '"{}" hat {} Verbindungen! ' \
                     'Du kannst sie dir hier ansehen: {}'.format(
                         word, self.ai.store.relation_count(word), gist_url
