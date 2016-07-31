@@ -65,8 +65,10 @@ class AIPlugin(object):
             word = word.lower()
             if self.ai.store.known(word):
                 words = self.ai.store.next_words(word)
-                if '\n' in words:
-                    words.remove('\n')
+                words_dict = dict(words)
+                end_char = '\n'
+                if end_char in words_dict:
+                    del words[words.index((end_char, words_dict[end_char]))]
                 text = [word, '====', '| Word | Score |', '| ---- | ----- |']
                 text.extend(
                     '{} | {}'.format(word, score)
