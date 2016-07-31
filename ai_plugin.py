@@ -67,9 +67,9 @@ class AIPlugin(object):
                 words = self.ai.store.next_words(word)
                 if '\n' in words:
                     words.remove('\n')
-                text = [word, '====']
+                text = [word, '====', '| Word | Score |', '| ---- | ----- |']
                 text.extend(
-                    '- {} *{}*'.format(word, score)
+                    '{} | {}'.format(word, score)
                     for word, score in sorted(words, key=lambda w: w[1],
                                               reverse=True)
                 )
