@@ -63,7 +63,7 @@ class AIPlugin(object):
         word = args['<word>']
         if word:
             word = word.lower()
-            if self.ai.store.known(word):
+            if word in self.ai.store:
                 words = self.ai.store.next_words(word)
                 words_dict = dict(words)
                 end_char = '\n'
