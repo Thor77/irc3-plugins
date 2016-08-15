@@ -19,7 +19,7 @@ class TweetPrintPlugin(object):
         for _, status_id in self.re_tweet.findall(data):
             try:
                 tweet = self.bot.get_social_connection().statuses.show(
-                    id=status_id, trim_user=True
+                    id=status_id
                 )
             except TwitterHTTPError:
                 continue
@@ -29,13 +29,14 @@ class TweetPrintPlugin(object):
                 tweet_text = tweet_text.replace(media['url'], media.get(
                     'media_url_https', media.get(
                         'media_url', media['url'])
-                    )
+                )
                 )
             # now expand normal urls
             for url in tweet['entities'].get('urls', []):
                 tweet_text = tweet_text.replace(url['url'], url.get(
                     'expanded_url', url['url'])
                 )
-            tweets.append(tweet_text)
+            tweets.append('@{handle} "{tweet}"'.format(
+                handle=tweet['user']['screen_name'], tweet=tweet_text))
         if tweets:
             self.bot.privmsg(target, ' | '.join(tweets))
