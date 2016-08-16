@@ -36,7 +36,7 @@ class TweetPrintPlugin(object):
                 tweet_text = tweet_text.replace(url['url'], url.get(
                     'expanded_url', url['url'])
                 )
-            tweets.append('@{handle} "{tweet}"'.format(
+            tweets.append('@{handle}: {tweet}'.format(
                 handle=tweet['user']['screen_name'], tweet=tweet_text))
         if tweets:
             self.bot.privmsg(target, ' | '.join(tweets))
