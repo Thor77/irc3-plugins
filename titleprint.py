@@ -8,7 +8,7 @@ from bs4 import BeautifulSoup
 
 def clean_title(title):
     title = title.replace('\\', '')
-    return title
+    return title.strip()
 
 
 def fetch_title(url):
