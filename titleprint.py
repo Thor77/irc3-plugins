@@ -31,7 +31,7 @@ def fetch_title(url):
 class URLPrintPlugin(object):
     def __init__(self, bot):
         self.bot = bot
-        self.bot.blocked_domains = ['twitter.com', 'github.com']
+        self.bot.blocked_domains = ['twitter.com']
         self.re_url = re.compile(
             r'https?://(.+\.)?(?P<domain>\w+\.\w+)(/.*)?'
         )
