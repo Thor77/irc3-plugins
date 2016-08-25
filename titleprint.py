@@ -33,7 +33,7 @@ class URLPrintPlugin(object):
         self.bot = bot
         self.bot.blocked_domains = ['twitter.com', 'github.com']
         self.re_url = re.compile(
-            r'https?:\/\/(w{3}\.)?(?P<domain>\w+\.\w+)/?.*'
+            r'https?://(.+\.)?(?P<domain>\w+\.\w+)(/.*)?'
         )
 
     @irc3.event(irc3.rfc.PRIVMSG)
