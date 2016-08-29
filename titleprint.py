@@ -38,7 +38,7 @@ class URLPrintPlugin(object):
 
     @irc3.event(irc3.rfc.PRIVMSG)
     def url(self, mask, event, target, data):
-        match = self.re_url.match(data)
+        match = self.re_url.search(data)
         if match:
             if match.group('domain') in self.bot.blocked_domains:
                 return
