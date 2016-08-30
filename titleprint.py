@@ -1,9 +1,12 @@
 # -*- coding: utf-8 -*-
+import logging
 import re
 
 import irc3
 import requests
 from bs4 import BeautifulSoup
+
+logger = logging.getLogger('irc3')
 
 
 def clean_title(title):
@@ -18,13 +21,20 @@ def fetch_title(url):
     :param url: url of the website
     :type url: str
     '''
-    response = requests.get(url, timeout=5)
+    logger.debug('Fetching title for "%s"', url)
+    try:
+        response = requests.get(url, timeout=5)
+    except Exception as e:
+        logger.warning('Couldn\'t fetch %s', url)
+        logger.debug(e)
+        return None
     if response.headers.get('content-type', '').startswith('text/'):
         try:
             bs = BeautifulSoup(response.text, 'html.parser')
             return clean_title(bs.title.string)
-        except:
-            return None
+        except Exception as e:
+            logger.warning('Couldn\'t fetch title from %s', url)
+            logger.debug(e)
 
 
 @irc3.plugin
