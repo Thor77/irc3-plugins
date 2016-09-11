@@ -44,7 +44,20 @@ class MutePlugin(object):
         else:
             return 'Ich bin gar nicht stumm!'
 
+    @command
+    def muted(self, mask, target, args):
+        '''Check if bot is muted
+
+            %%muted
+        '''
+        if self.bot.muted:
+            return 'Ich bin momentan still (noch für {} Minuten)!'.format(
+                int((self.mute_end - time()) / 60)
+            )
+        else:
+            return 'LALALALALALALALA (nein)'
+
     @irc3.event(irc3.rfc.PRIVMSG)
-    def muted(self, mask, event, target, data):
+    def check_mute(self, mask, event, target, data):
         if self.bot.muted and time() >= self.mute_end:
             self.bot.muted = False
