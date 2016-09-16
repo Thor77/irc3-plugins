@@ -8,6 +8,12 @@ from bs4 import BeautifulSoup
 
 logger = logging.getLogger('irc3')
 
+# Microsoft Edge User-Agent
+headers = {
+    'user-agent': 'Mozilla/5.0 (Windows NT 10.0) AppleWebKit/537.36 (KHTML, '
+    'like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.10136'
+}
+
 
 def clean_title(title):
     return title.replace('\\', '').strip()
@@ -22,7 +28,7 @@ def fetch_title(url):
     '''
     logger.debug('Fetching title for "%s"', url)
     try:
-        response = requests.get(url, timeout=5)
+        response = requests.get(url, timeout=5, headers=headers)
     except Exception as e:
         logger.warning('Couldn\'t fetch %s', url)
         logger.debug(e)
