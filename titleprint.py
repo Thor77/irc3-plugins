@@ -10,8 +10,7 @@ logger = logging.getLogger('irc3')
 
 
 def clean_title(title):
-    title = title.replace('\\', '')
-    return title.strip()
+    return title.replace('\\', '').strip()
 
 
 def fetch_title(url):
