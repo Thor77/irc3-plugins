@@ -10,7 +10,7 @@ class TweetPrintPlugin(object):
     def __init__(self, bot):
         self.bot = bot
         self.re_tweet = re.compile(
-            'https?:\/\/(w{3}\.)?twitter.com\/[\w\d_]+\/status\/(\d{15,20})'
+            r'https?:\/\/(w{3}\.)?twitter.com\/[\w\d_]+\/status\/(\d{15,20})'
         )
 
     @irc3.event(irc3.rfc.PRIVMSG)
