@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import html
 import re
 
 import irc3
@@ -23,7 +24,7 @@ class TweetPrintPlugin(object):
                 )
             except TwitterHTTPError:
                 continue
-            tweet_text = tweet['text']
+            tweet_text = html.unescape(tweet['text'])
             # first expand image-urls
             for media in tweet['entities'].get('media', []):
                 tweet_text = tweet_text.replace(media['url'], media.get(
