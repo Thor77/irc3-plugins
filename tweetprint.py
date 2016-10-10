@@ -26,12 +26,19 @@ class TweetPrintPlugin(object):
                 continue
             tweet_text = html.unescape(tweet['text'])
             # first expand image-urls
-            for media in tweet['entities'].get('media', []):
-                tweet_text = tweet_text.replace(media['url'], media.get(
-                    'media_url_https', media.get(
-                        'media_url', media['url'])
-                )
-                )
+            entities = tweet.get('extended_entities', tweet['entities'])
+            for media in entities.get('media', []):
+                current_url = media['url']
+                media_type = media['type']
+                if media_type == 'video':
+                    # take expanded-url for videos
+                    long_url = media.get('expanded_url', current_url)
+                else:
+                    # take media_url_https or media_url for everything else
+                    long_url = media.get(
+                        'media_url_https', media.get('media_url', current_url)
+                    )
+                tweet_text = tweet_text.replace(current_url, long_url)
             # now expand normal urls
             for url in tweet['entities'].get('urls', []):
                 tweet_text = tweet_text.replace(url['url'], url.get(
