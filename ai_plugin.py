@@ -14,10 +14,13 @@ class AIPlugin(object):
 
     def __init__(self, bot):
         self.bot = bot
+        ai_config = self.bot.config.get('ai', {})
         self.ai = MarkovPy(store=Redis(
-            host='localhost', port=6378, prefix='lolbot'
+            host=ai_config.get('redis_host', 'localhost'),
+            port=int(ai_config.get('redis_port', 6379)),
+            prefix=ai_config.get('redis_prefix', 'lolbot')
         ))
-        self.replyrate = self.bot.config.get('ai', {}).get('replyrate', 20)
+        self.replyrate = ai_config.get('replyrate', 20)
 
     def create_gist(self, text, title):
         '''
