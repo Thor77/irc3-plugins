@@ -6,7 +6,7 @@ import requests
 from irc3.plugins.command import command
 from irc3.rfc import JOIN_PART_QUIT, PRIVMSG
 from markov import MarkovPy
-from markov.stores import Pickle
+from markov.stores import Redis
 
 
 @irc3.plugin
@@ -14,7 +14,9 @@ class AIPlugin(object):
 
     def __init__(self, bot):
         self.bot = bot
-        self.ai = MarkovPy(store=Pickle('lolbot.pickle'))
+        self.ai = MarkovPy(store=Redis(
+            host='localhost', port=6378, prefix='lolbot'
+        ))
         self.replyrate = self.bot.config.get('ai', {}).get('replyrate', 20)
 
     def create_gist(self, text, title):
