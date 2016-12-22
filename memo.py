@@ -19,22 +19,24 @@ class MemoPlugin(object):
 
             %%memo <nick> <message>...
         '''
-        sender = mask.split('!')[0].lower()
-        receiver = args['<nick>'].lower()
+        sender = mask.split('!')[0]
+        receiver = args['<nick>']
+        receiver_lower = receiver.lower()
         message = ' '.join(args['<message>'])
         memo = Memo(message, sender)
-        if receiver in self.memo_store:
-            self.memo_store[receiver].append(memo)
+        if receiver_lower in self.memo_store:
+            self.memo_store[receiver_lower].append(memo)
         else:
-            self.memo_store[receiver] = [memo]
+            self.memo_store[receiver_lower] = [memo]
         return 'Successfully added memo for {}!'.format(receiver)
 
     @irc3.event(irc3.rfc.JOIN)
     def join(self, mask=None, event=None, channel=None):
-        nick = mask.split('!')[0].lower()
-        if nick in self.memo_store:
-            for memo in self.memo_store.get(nick, []):
+        nick = mask.split('!')[0]
+        nick_lower = nick.lower()
+        if nick_lower in self.memo_store:
+            for memo in self.memo_store.get(nick_lower, []):
                 memo_formatted = '{}: {} (from {})'.format(
                     nick, memo.text, memo.sender)
                 self.bot.privmsg(channel, memo_formatted)
-            del self.memo_store[nick]
+            del self.memo_store[nick_lower]
