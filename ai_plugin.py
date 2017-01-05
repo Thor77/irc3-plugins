@@ -105,6 +105,8 @@ class AIPlugin(object):
                 not getattr(self.bot, 'muted', False):
             r = self.ai.reply(data)
             if r:
+                if hasattr(self.bot, 'drunk_filter'):
+                    r = self.bot.drunk_filter(r)
                 self.bot.privmsg(target, r)
 
     @irc3.event(JOIN_PART_QUIT)
