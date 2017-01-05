@@ -78,7 +78,7 @@ class DrinkPlugin(object):
         words = message.split()
         unreplaced_words = words
         random.shuffle(unreplaced_words)
-        replace_rate = random.randint(1, plugin.max_level) / plugin.max_level
+        replace_rate = random.randint(1, plugin.drunk_level) / plugin.max_level
         words_to_replace = int(len(words) * replace_rate)
         for word in unreplaced_words[:words_to_replace]:
             message = message.replace(word, plugin.drunk_word)
