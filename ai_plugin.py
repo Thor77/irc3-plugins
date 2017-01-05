@@ -22,6 +22,12 @@ class AIPlugin(object):
         ))
         self.replyrate = ai_config.get('replyrate', 20)
 
+    def filter_reply(self, reply):
+        if not hasattr(self.bot, 'drunk_filter'):
+            return reply
+        else:
+            return self.bot.drunk_filter(reply)
+
     def create_gist(self, text, title):
         '''
         Create a gist from `text` and `title`
@@ -57,7 +63,7 @@ class AIPlugin(object):
         data = ' '.join(args['<data>'])
         r = self.ai.reply(data, min_length=2)
         if r:
-            return r
+            return self.filter_reply(r)
 
     @command
     def connections(self, mask, target, args):
@@ -105,9 +111,7 @@ class AIPlugin(object):
                 not getattr(self.bot, 'muted', False):
             r = self.ai.reply(data)
             if r:
-                if hasattr(self.bot, 'drunk_filter'):
-                    r = self.bot.drunk_filter(r)
-                self.bot.privmsg(target, r)
+                self.bot.privmsg(target, self.filter_reply(r))
 
     @irc3.event(JOIN_PART_QUIT)
     def join_part_quit(self, mask=None, event=None, channel=None, data=None):
@@ -116,4 +120,4 @@ class AIPlugin(object):
         nick = mask.split('!')[0].lower()
         r = self.ai.reply(nick)
         if r:
-            self.bot.privmsg(channel, r)
+            self.bot.privmsg(channel, self.filter_reply(r))
