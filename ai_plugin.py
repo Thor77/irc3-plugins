@@ -101,14 +101,15 @@ class AIPlugin(object):
             replyrate /= 2
         replyrate = 1 if replyrate < 1 else replyrate
         self.ai.learn(data)
-        if randint(0, replyrate) == 0 and not self.bot.muted:
+        if randint(0, replyrate) == 0 and \
+                not getattr(self.bot, 'muted', False):
             r = self.ai.reply(data)
             if r:
                 self.bot.privmsg(target, r)
 
     @irc3.event(JOIN_PART_QUIT)
     def join_part_quit(self, mask=None, event=None, channel=None, data=None):
-        if self.bot.muted:
+        if getattr(self.bot, 'muted', False):
             return
         nick = mask.split('!')[0].lower()
         r = self.ai.reply(nick)
