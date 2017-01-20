@@ -22,12 +22,6 @@ class AIPlugin(object):
         ))
         self.replyrate = ai_config.get('replyrate', 20)
 
-    def filter_reply(self, reply):
-        if not hasattr(self.bot, 'drunk_filter'):
-            return reply
-        else:
-            return self.bot.drunk_filter(reply)
-
     def create_gist(self, text, title):
         '''
         Create a gist from `text` and `title`
@@ -107,17 +101,14 @@ class AIPlugin(object):
             replyrate /= 2
         replyrate = 1 if replyrate < 1 else replyrate
         self.ai.learn(data)
-        if randint(0, replyrate) == 0 and \
-                not getattr(self.bot, 'muted', False):
+        if randint(0, replyrate) == 0:
             r = self.ai.reply(data)
             if r:
-                self.bot.privmsg(target, self.filter_reply(r))
+                self.bot.privmsg(target, r)
 
     @irc3.event(JOIN_PART_QUIT)
     def join_part_quit(self, mask=None, event=None, channel=None, data=None):
-        if getattr(self.bot, 'muted', False):
-            return
         nick = mask.split('!')[0].lower()
         r = self.ai.reply(nick)
         if r:
-            self.bot.privmsg(channel, self.filter_reply(r))
+            self.bot.privmsg(channel, r)
