@@ -8,9 +8,8 @@ from time import time
 class MutePlugin(object):
 
     def __init__(self, bot):
-        self.bot = bot
-        self.bot.muted = False
-        self.maxmute = int(self.bot.config.get('mute', {}).get('maxmute', 360))
+        self.muted = False
+        self.maxmute = int(bot.config.get('mute', {}).get('maxmute', 360))
 
     @command
     def mute(self, mask, target, args):
@@ -24,8 +23,8 @@ class MutePlugin(object):
         except ValueError:
             return 'Das ist keine valide Minuten-Anzahl!'
         duration = self.maxmute if duration > self.maxmute else duration
-        if not self.bot.muted:
-            self.bot.muted = True
+        if not self.muted:
+            self.muted = True
             self.mute_start = time()
             self.mute_end = self.mute_start + (duration * 60)  # => min
             return 'Ich bin jetzt für {} Minuten still!'.format(duration)
@@ -38,8 +37,8 @@ class MutePlugin(object):
 
             %%unmute
         '''
-        if self.bot.muted:
-            self.bot.muted = False
+        if self.muted:
+            self.muted = False
             return 'Ich rede jetzt wieder \o/'
         else:
             return 'Ich bin gar nicht stumm!'
@@ -50,7 +49,7 @@ class MutePlugin(object):
 
             %%muted
         '''
-        if self.bot.muted:
+        if self.muted:
             return 'Ich bin momentan still (noch für {} Minuten)!'.format(
                 int((self.mute_end - time()) / 60)
             )
@@ -59,5 +58,5 @@ class MutePlugin(object):
 
     @irc3.event(irc3.rfc.PRIVMSG)
     def check_mute(self, mask, event, target, data):
-        if self.bot.muted and time() >= self.mute_end:
-            self.bot.muted = False
+        if self.muted and time() >= self.mute_end:
+            self.muted = False
