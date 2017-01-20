@@ -3,6 +3,8 @@ import irc3
 from irc3.plugins.command import command
 from time import time
 
+from ai_plugin import AIPlugin, FILTER_EAT
+
 
 @irc3.plugin
 class MutePlugin(object):
@@ -10,6 +12,12 @@ class MutePlugin(object):
     def __init__(self, bot):
         self.muted = False
         self.maxmute = int(bot.config.get('mute', {}).get('maxmute', 360))
+
+        # add filter to ai-plugin
+        aiplugin_instance = bot.get_plugin(AIPlugin)
+        aiplugin_instance.filters.append(
+            (FILTER_EAT, lambda i, d, c: self.muted)
+        )
 
     @command
     def mute(self, mask, target, args):
