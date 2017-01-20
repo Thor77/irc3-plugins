@@ -8,6 +8,8 @@ import irc3
 from irc3.plugins.command import command
 from irc3.plugins.cron import cron
 
+from ai_plugin import AIPlugin, FILTER_CHANGE
+
 DRINK_PHRASES = [
     'Prost!',
     'Vielen Dank {nick} :)',
@@ -32,6 +34,12 @@ class DrinkPlugin(object):
         self.bot = bot
 
         self.drunk_level = 0
+
+        # add filter to ai_plugin
+        aiplugin_instance = bot.get_plugin(AIPlugin)
+        aiplugin_instance.filters.append(
+            (FILTER_CHANGE, self.drunk_filter)
+        )
 
     @command
     def drink(self, mask, target, args):
@@ -71,15 +79,14 @@ class DrinkPlugin(object):
             return
         plugin.drunk_level -= 1
 
-    @irc3.extend
-    def drunk_filter(plugin, message):
-        if plugin.drunk_level == 0:
+    def drunk_filter(self, mask, nick, message):
+        if self.drunk_level == 0:
             return message
         words = message.split()
         unreplaced_words = words
         random.shuffle(unreplaced_words)
-        replace_rate = random.randint(1, plugin.drunk_level) / plugin.max_level
+        replace_rate = random.randint(1, self.drunk_level) / self.max_level
         words_to_replace = int(len(words) * replace_rate)
         for word in unreplaced_words[:words_to_replace]:
-            message = message.replace(word, plugin.drunk_word)
+            message = message.replace(word, self.drunk_word)
         return message
