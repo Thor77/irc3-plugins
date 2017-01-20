@@ -88,7 +88,7 @@ class AIPlugin(object):
         data = ' '.join(args['<data>'])
         r = self.ai.reply(data, min_length=2)
         if r:
-            return self.filter_reply(r)
+            return r
 
     @command
     def connections(self, mask, target, args):
