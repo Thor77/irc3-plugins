@@ -7,12 +7,20 @@ from ai_plugin import AIPlugin, FILTER_EAT
 @irc3.plugin
 class IgnorePlugin(object):
     def __init__(self, bot):
-        self.ignored = []
+        self.bot = bot
+
+        if self not in self.bot.db or '' not in self.bot.db[self]:
+            # This workaround is required until
+            # https://github.com/gawel/irc3/issues/127 is solved
+            self.bot.db[self] = {'': []}
 
         # add filter to ai_plugin
         aiplugin_instance = bot.get_plugin(AIPlugin)
         aiplugin_instance.filters.append(
-            (FILTER_EAT, lambda mask, nick, message: nick in self.ignored)
+            (
+                FILTER_EAT,
+                lambda mask, nick, message: nick in self.bot.db[self]['']
+            )
         )
 
     @command(permission='admin')
@@ -22,10 +30,10 @@ class IgnorePlugin(object):
             %%ignore <nick>
         '''
         nick = args['<nick>']
-        if nick in self.ignored:
+        if nick in self.bot.db[self]['']:
             return '"{}" wird schon ignoriert!'.format(nick)
         else:
-            self.ignored.append(nick)
+            self.bot.db[self][''].append(nick)
             return 'Ich ignoriere "{}" jetzt!'.format(nick)
 
     @command(permission='admin')
@@ -35,10 +43,10 @@ class IgnorePlugin(object):
             %%allow <nick>
         '''
         nick = args['<nick>']
-        if nick not in self.ignored:
+        if nick not in self.bot.db[self]['']:
             return 'Dieser Nutzer wird noch nicht ignoriert!'
         else:
-            self.ignored.remove(nick)
+            self.bot.db[self][''].remove(nick)
             return '"{}" wird jetzt nicht mehr ignoriert!'.format(nick)
 
     @command
@@ -47,8 +55,8 @@ class IgnorePlugin(object):
 
             %%ignored
         '''
-        if not self.ignored:
+        if not self.bot.db[self]['']:
             return 'Es werden noch keine Nutzer ignoriert!'
         return 'Ich ignoriere momentan diese Nutzer: {}'.format(
-            ', '.join(self.ignored)
+            ', '.join(self.bot.db[self][''])
         )
