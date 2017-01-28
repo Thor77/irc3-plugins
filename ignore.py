@@ -19,7 +19,8 @@ class IgnorePlugin(object):
         aiplugin_instance.filters.append(
             (
                 FILTER_EAT,
-                lambda mask, nick, message: nick in self.bot.db[self]['']
+                lambda mask, nick, message:
+                    nick.lower() in self.bot.db[self]['']
             )
         )
 
@@ -30,10 +31,11 @@ class IgnorePlugin(object):
             %%ignore <nick>
         '''
         nick = args['<nick>']
-        if nick in self.bot.db[self]['']:
+        nick_l = nick.lower()
+        if nick_l in self.bot.db[self]['']:
             return '"{}" wird schon ignoriert!'.format(nick)
         else:
-            self.bot.db[self][''].append(nick)
+            self.bot.db[self][''].append(nick_l)
             return 'Ich ignoriere "{}" jetzt!'.format(nick)
 
     @command(permission='admin')
@@ -43,10 +45,11 @@ class IgnorePlugin(object):
             %%allow <nick>
         '''
         nick = args['<nick>']
-        if nick not in self.bot.db[self]['']:
+        nick_l = nick.lower()
+        if nick_l not in self.bot.db[self]['']:
             return 'Dieser Nutzer wird noch nicht ignoriert!'
         else:
-            self.bot.db[self][''].remove(nick)
+            self.bot.db[self][''].remove(nick_l)
             return '"{}" wird jetzt nicht mehr ignoriert!'.format(nick)
 
     @command
