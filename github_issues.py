@@ -4,6 +4,8 @@ import re
 import irc3
 import requests
 
+from ignore import IgnorePlugin
+
 
 @irc3.plugin
 class GithubIssuesPlugin(object):
@@ -20,6 +22,9 @@ class GithubIssuesPlugin(object):
 
     @irc3.event(irc3.rfc.PRIVMSG)
     def issue(self, mask, event, target, data):
+        nick = mask.split('!')[0].lower()
+        if nick.lower() in self.bot.db[self.bot.get_plugin(IgnorePlugin)]['']:
+            return
         issues = []
         for match in self.re_issues.finditer(data):
             match = match.groupdict()
